@@ -5,3 +5,8 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 }
+
+#[no_mangle]
+pub extern "C" fn plug_task(){
+    println!("Hello from plugin");
+}

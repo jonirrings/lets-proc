@@ -1,5 +1,5 @@
 [package]
-name = "plugins"
+name = "alien_ton"
 version = "0.1.0"
 authors = ["Jonir Rings <peterpuyi@live.cn>"]
 

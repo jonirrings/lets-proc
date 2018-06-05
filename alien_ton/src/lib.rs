@@ -7,6 +7,6 @@ mod tests {
 }
 
 #[no_mangle]
-pub extern "C" fn plug_task(){
-    println!("Hello from plugin");
+pub extern "C" fn plug_task() {
+    println!("Hello from alien_ton");
 }

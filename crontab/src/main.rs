@@ -1,8 +1,8 @@
 extern crate libloading;
 
-use std::env;
 use libloading::{Library, Symbol};
-type PlugTask = unsafe fn()->();
+use std::env;
+type PlugTask = unsafe fn() -> ();
 
 fn main() {
     println!("Hello from crontab");

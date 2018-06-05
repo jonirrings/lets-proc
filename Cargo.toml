@@ -2,7 +2,8 @@
 
 members = [
     "crontab",
-    "plugins"
+    "alien_ton",
+    "story_apple"
 ]
 
 # The development profile, used for `cargo build`.

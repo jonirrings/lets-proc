@@ -1,4 +1,9 @@
 language: rust
-rust:
-- stable
 cache: cargo
+os:
+  - linux
+  - osx
+rust:
+  - stable
+  - beta
+  - nightly

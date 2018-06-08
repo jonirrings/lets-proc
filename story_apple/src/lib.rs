@@ -1,11 +1,11 @@
 extern crate rand;
 
-mod pick_apple;
 mod eat_apple;
+mod pick_apple;
 
-fn pick_eat(kid: u32) {
-// thread -- parent pick apple
-// threads -- children eat apple
+fn pick_eat(kid: u64) {
+    // thread -- parent pick apple
+    // threads -- children eat apple
 }
 
 #[no_mangle]

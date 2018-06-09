@@ -5,6 +5,7 @@ authors = ["Jonir Rings <peterpuyi@live.cn>"]
 
 [dependencies]
 rand = "0.5.0"
+crossbeam-utils = "0.4.0"
 
 [lib]
 crate-type = ["cdylib"]

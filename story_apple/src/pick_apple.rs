@@ -1,21 +1,10 @@
 use rand::thread_rng;
 use rand::RngCore;
-use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering;
-use std::sync::Arc;
-use std::sync::{Condvar, Mutex};
 use std::thread;
-use std::thread::ThreadId;
+use std::thread::{current, sleep, ThreadId};
 use std::time::Duration;
-
-pub struct AppleBasket {
-    // max volume
-    pub max_vol: u32,
-    // apple count
-    pub count: (Mutex<u32>, Condvar),
-    //close basket if it's full
-    pub open: AtomicBool,
-}
+use AppleBasket;
 
 /**
  * The parent should pick apples on one hand,
@@ -52,50 +41,46 @@ static EVENT_TABS: [EventTab; 4] = [
 
 fn e_bird(per: ThreadId) {
     let ms_time = 1000;
-    let duration = Duration::from_millis(ms_time);
-    thread::sleep(duration);
-    print!(
-        "[P{:?}]:\n
-A bird flies around the apple tree,\n
-with eyes staring on apples.\n
-It takes {} ms to scare it away.\n",
+    sleep(Duration::from_millis(1000));
+    println!(
+        "[P{:?}]:
+A bird flies around the apple tree,
+with eyes staring on apples.
+It takes {} ms to scare it away.",
         per, ms_time
     );
 }
 
 fn e_wild_dog(per: ThreadId) {
     let ms_time = 2500;
-    let duration = Duration::from_millis(ms_time);
-    thread::sleep(duration);
-    print!(
-        "[P{:?}]:\n
-A wild dog runs fast towards here,\n
-whose barks make us crazy.\n
-Drive it away with {} ms.\n",
+    sleep(Duration::from_millis(2500));
+    println!(
+        "[P{:?}]:
+A wild dog runs fast towards here,
+whose barks make us crazy.
+Drive it away with {} ms.",
         per, ms_time
     );
 }
 
 fn e_neighbor(per: ThreadId) {
     let ms_time = 500;
-    let duration = Duration::from_millis(ms_time);
-    thread::sleep(duration);
-    print!(
-        "[P{:?}]:\n
-An acquaintance walks past,\n
-saying hello to us.\n
-It's polite to take {} ms to greet him.\n",
+    sleep(Duration::from_millis(500));
+    println!(
+        "[P{:?}]:
+An acquaintance walks past,
+saying hello to us.
+It's polite to take {} ms to greet him.",
         per, ms_time
     );
 }
 
 fn e_break(per: ThreadId) {
     let ms_time = 2000;
-    let duration = Duration::from_millis(ms_time);
-    thread::sleep(duration);
-    print!(
-        "[P{:?}]:\n
-Tired, and better to take a break with {} ms.\n",
+    sleep(Duration::from_millis(2000));
+    println!(
+        "[P{:?}]:
+Tired, and better to take a break with {} ms.",
         per, ms_time
     );
 }
@@ -112,14 +97,12 @@ fn gen_event() -> Option<&'static EventTab> {
             return Some(event_tab);
         }
     }
-    return None;
+    None
 }
 
 fn job_pick(bask: &AppleBasket, per: ThreadId) {
-    let ms_time = 500;
-    let duration = Duration::from_millis(ms_time);
     // pick an apple
-    thread::sleep(duration);
+    thread::sleep(Duration::from_millis(500));
     let (ref lock, ref cvar) = bask.count;
     let mut count = lock.lock().unwrap();
     *count += 1;
@@ -129,7 +112,7 @@ fn job_pick(bask: &AppleBasket, per: ThreadId) {
         cvar.notify_one();
     }
     // basket is full
-    if *count >= bask.max_vol {
+    if *count == bask.max_vol {
         // close basket
         bask.open.store(false, Ordering::Relaxed);
         println!("Basket is full and then close it.");
@@ -138,11 +121,10 @@ fn job_pick(bask: &AppleBasket, per: ThreadId) {
     }
 }
 
-pub fn pick_thread(bask: Arc<AppleBasket>) {
-    let per = thread::current().id();
+pub fn pick_thread(bask: &AppleBasket) {
+    let per = current().id();
     while bask.open.load(Ordering::Relaxed) {
-        let do_event = gen_event();
-        match do_event {
+        match gen_event() {
             Some(ref event_tab) => (event_tab.event)(per),
             None => job_pick(&*bask, per),
         }

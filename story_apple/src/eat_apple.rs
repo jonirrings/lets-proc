@@ -10,7 +10,7 @@ fn job_eat(basket: &AppleBasket, kid: ThreadId) {
     {
         let (ref lock, ref cvar) = basket.count;
         let mut count = lock.lock().unwrap();
-        if basket.open.load(Ordering::Relaxed) && *count == 0 {
+        while basket.open.load(Ordering::Relaxed) && *count == 0 {
             count = cvar.wait(count).unwrap();
         }
         if basket.open.load(Ordering::Relaxed) {
